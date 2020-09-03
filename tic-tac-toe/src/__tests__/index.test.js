@@ -4,31 +4,31 @@ import {Game} from '../game';
 import userEvent from '@testing-library/user-event';
 
 describe('Game history', function() {
-    it('should start with empty history', function() {
-        const {container} = render(<Game/>);
+    it('should start with empty history', async function() {
+        const {queryAllByRole} = render(<Game/>);
 
-        const movementHistory = container.querySelectorAll('.game-info li');
-        expect(movementHistory.length).toBe(1);
+        const movementHistory = queryAllByRole('button', {name: /go to move/i});
+        expect(movementHistory.length).toBe(0);
     });
 
     it('should remember the first movement', async function() {
-        const {container, getByTestId} = render(<Game/>);
+        const {getByTestId, getAllByRole} = render(<Game/>);
         const square = getByTestId('square-1');
 
         await userEvent.click(square);
 
-        const movementHistory = container.querySelectorAll('.game-info li');
-        expect(movementHistory.length).toBe(2);
+        const movementHistory = getAllByRole('button', {name: /go to move/i});
+        expect(movementHistory.length).toBe(1);
     });
 
     it('should remember the following movements', async function() {
-        const {container, getByTestId} = render(<Game/>);
+        const {getByTestId, getAllByRole} = render(<Game/>);
         await userEvent.click(getByTestId('square-1'));
 
         await userEvent.click(getByTestId('square-2'));
 
-        const movementHistory = container.querySelectorAll('.game-info li');
-        expect(movementHistory.length).toBe(3);
+        const movementHistory = getAllByRole('button', {name: /go to move/i});
+        expect(movementHistory.length).toBe(2);
     });
 });
 

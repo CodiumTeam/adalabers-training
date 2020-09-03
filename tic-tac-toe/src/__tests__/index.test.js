@@ -2,13 +2,14 @@ import React from 'react';
 import {render} from '@testing-library/react';
 import {Game} from '../game';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom/extend-expect';
 
 describe('Game history', function() {
     it('should start with empty history', async function() {
-        const {queryAllByRole} = render(<Game/>);
+        const {queryByRole} = render(<Game/>);
 
-        const movementHistory = queryAllByRole('button', {name: /go to move/i});
-        expect(movementHistory.length).toBe(0);
+        const movementHistory = queryByRole('button', {name: /go to move/i});
+        expect(movementHistory).toBeNull();
     });
 
     it('should remember the first movement', async function() {
@@ -34,12 +35,11 @@ describe('Game history', function() {
 
 describe('Game board', function() {
     it('should start with an empty board', function() {
-        const {container} = render(<Game/>);
+        const {getAllByRole} = render(<Game/>);
 
-        const buttons = container.querySelectorAll('.square');
-        buttons.forEach((button) => {
-            expect(button.innerHTML).toBe('');
-        });
+        const buttons = getAllByRole('button' , {name: ''});
+
+        expect(buttons.length).toBe(9);
     });
 
     it('should show the user symbol when is clicked', async function() {
@@ -57,7 +57,7 @@ describe('Game board', function() {
 
         await userEvent.click(square);
 
-        expect(square.innerHTML).toBe('X');
+        expect(square).toHaveTextContent('X');
     });
 
     it('should start players play alternatively', async function() {
@@ -67,7 +67,7 @@ describe('Game board', function() {
 
         await userEvent.click(square);
 
-        expect(square.innerHTML).toBe('O');
+        expect(square).toHaveTextContent('O');
     });
 });
 
@@ -76,7 +76,7 @@ describe('Next player', function() {
         const {container} = render(<Game/>);
 
         const nextPlayer = container.querySelector('.game-info div');
-        expect(nextPlayer.innerHTML).toBe('Next player: X');
+        expect(nextPlayer).toHaveTextContent('Next player: X');
     });
 
     it('should be O after X make his move', async function() {
@@ -85,7 +85,7 @@ describe('Next player', function() {
         await userEvent.click(getByTestId('square-1'));
 
         const nextPlayer = container.querySelector('.game-info div');
-        expect(nextPlayer.innerHTML).toBe('Next player: O');
+        expect(nextPlayer).toHaveTextContent('Next player: O');
     });
 
     it('should be X after O make his move', async function() {
@@ -95,7 +95,7 @@ describe('Next player', function() {
         await userEvent.click(getByTestId('square-2'));
 
         const nextPlayer = container.querySelector('.game-info div');
-        expect(nextPlayer.innerHTML).toBe('Next player: X');
+        expect(nextPlayer).toHaveTextContent('Next player: X');
     });
 
 });
